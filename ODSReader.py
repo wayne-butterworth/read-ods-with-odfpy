@@ -41,7 +41,8 @@ class ODSReader:
         name = sheet.getAttribute("name")
         rows = sheet.getElementsByType(TableRow)
         arrRows = []
-
+        # remember the length of the longest row
+        maxLen = 0
         # for each row
         for row in rows:
             row_comment = ""
@@ -87,11 +88,18 @@ class ODSReader:
                         count+=1
 
             # if row contained something
-            if(len(arrCells)):
+            rowlen = len(arrCells)
+            if(rowlen):
                 arrRows.append(arrCells)
-
+                if rowlen > maxLen:     # if this row is the longest so far
+                    maxLen = rowlen     # remember the length
             #else:
             #    print ("Empty or commented row (", row_comment, ")")
+
+        # make all rows 'maxLen' length
+        for row in arrRows:
+            if len(row) < maxLen:
+                row[maxLen-1] = None
 
         self.SHEETS[name] = arrRows
 
